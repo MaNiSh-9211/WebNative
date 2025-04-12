@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Cloudflare Tunnel</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      overflow-x: hidden;
+      font-family: 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #1e1e2f, #2a2a40);
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      min-width: 100vw;
+    }
+
+    .container {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 600px;
+      width: 90%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      font-size: 2rem;
+      margin-bottom: 2rem;
+      background: linear-gradient(to right, #00f260, #0575e6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    label {
+      font-size: 1rem;
+      margin-bottom: 0.25rem;
+      opacity: 0.8;
+    }
+
+    .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .input-wrapper input[type="number"] {
+      width: 100%;
+      padding: 0.75rem 3rem 0.75rem 1rem;
+      border-radius: 12px;
+      border: none;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      font-size: 1rem;
+      transition: 0.3s ease;
+      -moz-appearance: textfield;
+    }
+
+    .input-wrapper input[type="number"]:focus {
+      background: rgba(255, 255, 255, 0.15);
+      outline: none;
+      box-shadow: 0 0 0 2px #00f26055;
+    }
+
+    .input-wrapper input::-webkit-outer-spin-button,
+    .input-wrapper input::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+
+    .input-wrapper .inner-buttons {
+      position: absolute;
+      right: 0.5rem;
+      top: 50%;
+      transform: translateY(-50%);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .inner-buttons button {
+      background: linear-gradient(to right, #00f260, #0575e6);
+      border: none;
+      border-radius: 4px;
+      color: white;
+      width: 16px;
+      height: 14px;
+      font-size: 11px;
+      cursor: pointer;
+      line-height: 1;
+      padding: 0;
+      transition: background 0.3s ease;
+    }
+
+    .inner-buttons button:hover {
+      background: linear-gradient(to right, #0575e6, #00f260);
+    }
+
+    .button-row {
+      display: flex;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .button-row button {
+      flex: 1;
+      padding: 0.75rem 1.5rem;
+      font-size: 1rem;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    #start-tunnel {
+      background: linear-gradient(to right, #00f260, #0575e6);
+      color: white;
+    }
+
+    #start-tunnel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(0, 242, 96, 0.3);
+    }
+
+    #stop-tunnel {
+      background: linear-gradient(to right, #ff416c, #ff4b2b);
+      color: white;
+    }
+
+    #stop-tunnel:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 18px rgba(255, 65, 108, 0.3);
+    }
+
+    #log {
+      margin-top: 1.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 1rem;
+      border-radius: 12px;
+      max-height: 300px;
+      overflow-y: auto;
+      font-size: 0.95rem;
+      color: #dcdcdc;
+      white-space: pre-wrap;
+      word-wrap: break-word;
+    }
+
+    .placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.6;
+      font-size: 1.2rem;
+    }
+
+    .url-success {
+      margin-top: 1.5rem;
+      padding: 1rem;
+      background: linear-gradient(to right, #43e97b, #38f9d7);
+      color: #000;
+      font-weight: 600;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(56, 249, 215, 0.2);
+      position: relative;
+    }
+
+    .copy-btn {
+      position: absolute;
+      right: 1rem;
+      top: 1rem;
+      background: #00000033;
+      border: none;
+      color: #000;
+      padding: 0.3rem 0.6rem;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.8rem;
+    }
+
+    .copy-btn:hover {
+      background: #00000055;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Cloudflare Tunnel</h1>
+    <div class="form-group">
+      <label for="portInput">Enter Localhost Port</label>
+      <div class="input-wrapper">
+        <input id="portInput" type="number" placeholder="3000" />
+        <div class="inner-buttons">
+          <button onclick="adjustPort(1)">+</button>
+          <button onclick="adjustPort(-1)">−</button>
+        </div>
+      </div>
+      <div class="button-row">
+        <button id="start-tunnel">Expose</button>
+        <button id="stop-tunnel">Stop</button>
+      </div>
+    </div>
+    <div id="log"><div class="placeholder">🧩 Waiting for tunnel status...</div></div>
+  </div>
+
+  <script>
+    function adjustPort(delta) {
+      const input = document.getElementById('portInput');
+      let value = parseInt(input.value) || 0;
+      input.value = value + delta;
+    }
+  </script>
+  <script src="./tunnel.js"></script>
+</body>
+</html>

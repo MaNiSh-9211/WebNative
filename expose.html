@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head><title>Expose Localhost</title></head>
+<body>
+  <h2>Expose a Port</h2>
+  <input id="portInput" type="text" placeholder="Enter port e.g., 3000" />
+  <button id="exposeBtn">Expose</button>
+  <p id="output"></p>
+  <script>
+    const { ipcRenderer } = require('electron');
+
+    document.getElementById('exposeBtn').addEventListener('click', () => {
+      const port = document.getElementById('portInput').value;
+      ipcRenderer.send('start-tunnel', port);
+    });
+
+    ipcRenderer.on('tunnel-url', (e, url) => {
+      document.getElementById('output').innerText = `Tunnel URL: ${url}`;
+      window.open(url); // Or send to main webview
+    });
+  </script>
+</body>
+</html>

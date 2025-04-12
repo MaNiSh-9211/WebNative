@@ -1,75 +1,4 @@
-<!-- <!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Electron Browser</title>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      flex-direction: column;
-      height: 100vh;
-    }
-    header {
-      display: flex;
-      align-items: center;
-      padding: 10px 20px;
-      background-color: #282c34;
-      color: white;
-      z-index: 1;
-    }
-    header input {
-      flex: 1;
-      margin-right: 10px;
-      padding: 5px;
-    }
-    header button {
-      padding: 5px 10px;
-      cursor: pointer;
-    }
-    webview {
-      flex: 1;
-      border: none;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <input id="url-input" type="text" placeholder="Enter URL or search query" />
-    <button id="navigate-btn">Go</button>
-  </header>
-  <webview id="browser-view" src="https://www.google.com"></webview>
-
-  <script>
-    const navigateBtn = document.getElementById('navigate-btn');
-    const urlInput = document.getElementById('url-input');
-    const browserView = document.getElementById('browser-view');
-
-    // Handle URL navigation
-    navigateBtn.addEventListener('click', () => {
-      const input = urlInput.value.trim();
-      if (input) {
-        // Send the URL to the main process
-        window.electron.navigateToUrl(input);
-      }
-    });
-
-    // Update the webview with the validated URL
-    window.electron.onNavigateUrlResponse((validatedUrl) => {
-      browserView.src = validatedUrl;
-    });
-  </script>
-</body>
-</html> -->
-
-
-
-
-
-
+<!-- 
 
 
 <!DOCTYPE html>
@@ -168,4 +97,113 @@
     });
   </script>
 </body>
+</html> -->
+
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Webnative</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+    }
+    header {
+      display: flex;
+      align-items: center;
+      padding: 10px 20px;
+      background-color: #282c34;
+      color: white;
+      z-index: 1;
+    }
+    header button {
+      padding: 5px 10px;
+      cursor: pointer;
+      margin-right: 10px;
+      background-color: #444;
+      color: white;
+      border: none;
+      border-radius: 3px;
+    }
+    header button:disabled {
+      background-color: #666;
+      cursor: not-allowed;
+    }
+    header input {
+      flex: 1;
+      margin-right: 10px;
+      padding: 5px;
+    }
+    webview {
+      flex: 1;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <button id="back-btn" disabled>Back</button>
+    <button id="forward-btn" disabled>Forward</button>
+    <input id="url-input" type="text" placeholder="Enter URL or search query" />
+    <button id="navigate-btn">Go</button>
+    <button id="tunnel-btn">Open Tunnel</button> <!-- New button to open tunnel -->
+  </header>
+  <webview id="browser-view" src="https://www.google.com/"></webview>
+
+  <script>
+    const backBtn = document.getElementById('back-btn');
+    const forwardBtn = document.getElementById('forward-btn');
+    const navigateBtn = document.getElementById('navigate-btn');
+    const tunnelBtn = document.getElementById('tunnel-btn');
+    const urlInput = document.getElementById('url-input');
+    const browserView = document.getElementById('browser-view');
+
+    // Handle URL navigation
+    navigateBtn.addEventListener('click', () => {
+      const input = urlInput.value.trim();
+      if (input) {
+        window.electron.navigateToUrl(input);
+      }
+    });
+
+    // Update the webview with the validated URL
+    window.electron.onNavigateUrlResponse((validatedUrl) => {
+      browserView.src = validatedUrl;
+    });
+
+    // Handle back and forward navigation
+    backBtn.addEventListener('click', () => {
+      if (browserView.canGoBack()) {
+        browserView.goBack();
+      }
+    });
+
+    forwardBtn.addEventListener('click', () => {
+      if (browserView.canGoForward()) {
+        browserView.goForward();
+      }
+    });
+
+    // Enable or disable back/forward buttons based on navigation state
+    browserView.addEventListener('did-navigate', () => {
+      backBtn.disabled = !browserView.canGoBack();
+      forwardBtn.disabled = !browserView.canGoForward();
+    });
+
+    // Open the tunneling window when the button is clicked
+    tunnelBtn.addEventListener('click', () => {
+      window.electron.openTunnelWindow();
+    });
+  </script>
+</body>
 </html>
+
